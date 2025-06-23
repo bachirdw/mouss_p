@@ -1,0 +1,98 @@
+ <!-- Étapes de test avec Postman
+1. 🔐 Inscription d’un utilisateur
+URL : POST http://localhost:8080/api/users/register
+Body (JSON) :
+
+
+Modifier
+{
+  "name": "Jean Dupont",
+  "email": "jean@mail.com",
+  "password": "secret123"
+}
+Résultat attendu :
+
+Code 200 OK
+
+Le JSON de l'utilisateur enregistré est retourné (avec l’ID, nom, email, rôle "USER"...)
+
+✅ Vérifie que l’utilisateur est bien inséré dans la base H2 (si tu actives la console).
+
+2. 🔑 Connexion et récupération du JWT
+URL : POST http://localhost:8080/api/auth/login
+Body (JSON) :
+
+
+{
+  "email": "jean@mail.com",
+  "password": "secret123"
+}
+Résultat attendu :
+
+Code 200 OK
+
+Un objet JSON contenant un champ token :
+
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "email": "jean@mail.com",
+  "role": "USER"
+}
+📌 Copie bien le token, tu vas l’utiliser dans les appels suivants.
+
+3. 🔒 Appel d’un endpoint protégé sans token (⚠️)
+URL : GET http://localhost:8080/api/vehicules (exemple d'endpoint protégé)
+Headers : Aucun
+
+Résultat attendu :
+
+Code 401 Unauthorized
+
+Message d’erreur "Full authentication is required to access this resource"
+
+4. ✅ Appel du même endpoint AVEC le token JWT
+URL : GET http://localhost:8080/api/vehicules
+Headers :
+
+
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...
+💡 Clique sur "Headers", ajoute :
+
+Clé : Authorization
+
+Valeur : Bearer {token} (⚠️ bien mettre un espace après Bearer)
+
+Résultat attendu :
+
+Code 200 OK
+
+Liste des véhicules si ton endpoint retourne des données.
+
+5. 🛑 Test d’une requête avec un token invalide
+Reprends l’étape 4 mais coupe le token ou change un caractère :
+
+
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+Résultat attendu :
+
+Code 403 Forbidden ou 401 Unauthorized
+
+Message d’erreur (selon ton filtre JWT)
+
+6. 🔐 Test avec un utilisateur ayant le rôle ADMIN
+Crée un admin dans ta base (manuellement ou via data.sql)
+
+Connecte-toi avec ses credentials
+
+Vérifie qu’il peut accéder à des routes réservées (ex : /api/admin/users)
+
+Un utilisateur avec le rôle "USER" ne doit PAS y avoir accès (il reçoit 403)
+
+🔍 Astuces
+Active les logs JWT côté Spring pour mieux comprendre si le token est bien décodé.
+
+Utilise le site https://jwt.io pour décoder visuellement un JWT.
+
+Tu peux ajouter un "Environnement Postman" avec la variable {{token}} pour automatiser tes tests.
+ -->
